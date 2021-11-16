@@ -86,6 +86,7 @@ people_out_file     = target_dir + "people.dsv"
 language_out_file   = target_dir + "language.dsv"
 country_out_file    = target_dir + "country.dsv"
 has_alternative_title_out_file = target_dir + "has_alternative.dsv"
+characters_out_file=target_dir+"characters.dsv"
 
 # these codes seem to be missing form the iso639 module 
 fix_iso639 = {}
@@ -114,7 +115,6 @@ print("... filtering movies ...");
 # genres (string array)  – includes up to three genres associated with the title
 
 movies = {}
-
 
 with open(movies_in_file, mode='r') as csvfile:
     moviesCSV = csv.DictReader(csvfile, delimiter='\t')
@@ -310,6 +310,27 @@ print (bar.join(["movie_id","person_id", "position"]), file=positions_out)
 print (bar.join(["movie_id", "person_id", "role"]), file=roles_out)
 keep_person = {}
 
+print (bar.join(["character_ID","person_id", "character"]), file=positions_out)
+def hash(s,t):
+    return s+t
+with open(positions_in_file,mode='r') as csvfile:
+    characterCSV=csv.DictReader(csvfile, delimiter='\t')
+    for line in characterCSV:
+        try:
+            p_ID=line['nconst']
+            category=line['category']
+            char_ID=hash(nconst,character)
+            if(category=='actor'or category=='actress'):
+                character=line['characters']
+                if character=='\\N':
+                    raise IOError("")
+                charList=character.split(',')
+                for role in charList:
+                    print(bar.join([char_ID,p_ID,role]), file=characters_out_file)
+        except Exception:
+            pass
+
+
 with open(positions_in_file, mode='r') as csvfile:
     positionsCSV = csv.DictReader(csvfile, delimiter='\t')
     for line in positionsCSV:
@@ -407,5 +428,3 @@ print ("... DONE!")
 # parentTconst (string) - alphanumeric identifier of the parent TV Series
 # seasonNumber (integer) – season number the episode belongs to
 # episodeNumber (integer) – episode number of the tconst in the TV series
-
-
